@@ -16,7 +16,7 @@ jobs:
 
       - name: Extract Android project
         run: |
-          unzip -o PromptForge-Mobile-Beta-b1.zip
+          unzip -o PromptForge-Mobile-Beta-b2.zip
           echo "Android project extracted"
           ls -la PromptForgeBetaAndroid
 
@@ -75,11 +75,11 @@ jobs:
       - name: Rename APK
         run: |
           cp PromptForgeBetaAndroid/app/build/outputs/apk/debug/app-debug.apk \
-             PromptForge-Beta-1.0.0-b1.apk
+             PromptForge-Beta-1.0.0-b2.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: PromptForge-Beta-1.0.0-b1
-          path: PromptForge-Beta-1.0.0-b1.apk
+          name: PromptForge-Beta-1.0.0-b2
+          path: PromptForge-Beta-1.0.0-b2.apk
           if-no-files-found: error
