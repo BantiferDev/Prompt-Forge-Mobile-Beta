@@ -16,10 +16,8 @@ jobs:
 
       - name: Extract Android project
         run: |
-          unzip PromptForge-Mobile-Beta-b1.zip
-          echo "Root contents:"
-          ls -la
-          echo "Project contents:"
+          unzip -o PromptForge-Mobile-Beta-b1.zip
+          echo "Android project extracted"
           ls -la PromptForgeBetaAndroid
 
       - name: Set up Java 17
@@ -28,30 +26,39 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK packages
+      - name: Configure Android SDK
         run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          sdkmanager --version
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0"
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-36" \
+            "build-tools;36.0.0"
 
-      - name: Set up Gradle
+      - name: Set up Gradle 8.13
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
 
-      - name: Build debug APK
+      - name: Build Prompt Forge APK
         working-directory: PromptForgeBetaAndroid
-        run: gradle --no-daemon assembleDebug
+        run: |
+          gradle --no-daemon :app:assembleDebug
+
+      - name: Verify APK
+        run: |
+          ls -lh PromptForgeBetaAndroid/app/build/outputs/apk/debug/
+          test -f PromptForgeBetaAndroid/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Rename APK
         run: |
           cp PromptForgeBetaAndroid/app/build/outputs/apk/debug/app-debug.apk \
              PromptForge-Beta-1.0.0-b1.apk
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: PromptForge-Beta-1.0.0-b1
           path: PromptForge-Beta-1.0.0-b1.apk
+          if-no-files-found: error
