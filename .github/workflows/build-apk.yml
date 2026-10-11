@@ -20,6 +20,14 @@ jobs:
           echo "Android project extracted"
           ls -la PromptForgeBetaAndroid
 
+      - name: Patch Beta WebView debugging
+        run: |
+          sed -i 's/WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);/WebView.setWebContentsDebuggingEnabled(true);/' \
+            PromptForgeBetaAndroid/app/src/main/java/com/promptforge/beta/MainActivity.java
+
+          grep -n "setWebContentsDebuggingEnabled" \
+            PromptForgeBetaAndroid/app/src/main/java/com/promptforge/beta/MainActivity.java
+            
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
